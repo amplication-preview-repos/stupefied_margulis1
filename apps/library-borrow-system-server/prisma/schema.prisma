@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Librarian {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  password  String?
+  updatedAt DateTime @updatedAt
+  username  String?
+}
+
+model Book {
+  author       String?
+  borrows      Borrow[]
+  createdAt    DateTime @default(now())
+  edition      String?
+  id           String   @id @default(cuid())
+  isbn         String?
+  isBorrowable Boolean?
+  publisher    String?
+  title        String?
+  updatedAt    DateTime @updatedAt
+  year         Int?
+}
+
+model Borrow {
+  book       Book?     @relation(fields: [bookId], references: [id])
+  bookId     String?
+  createdAt  DateTime  @default(now())
+  endDueDate DateTime?
+  id         String    @id @default(cuid())
+  member     Member?   @relation(fields: [memberId], references: [id])
+  memberId   String?
+  returnDate DateTime?
+  startDate  DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Member {
+  address   String?
+  borrows   Borrow[]
+  contact   String?
+  createdAt DateTime             @default(now())
+  id        String               @id @default(cuid())
+  name      String?
+  typeField EnumMemberTypeField?
+  updatedAt DateTime             @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumMemberTypeField {
+  Option1
+}
